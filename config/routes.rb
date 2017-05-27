@@ -11,8 +11,6 @@ Rails.application.routes.draw do
       end
       get 'students', to: 'courses#students', on: :member
     end
-    resources :people
-
     root to: 'courses#index'
   end
 
