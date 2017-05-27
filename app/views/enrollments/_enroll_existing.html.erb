@@ -1,0 +1,36 @@
+<div class="modal-header">
+   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+   <h3 id="myModalLabel">Enroll Existing Student</h3>
+ </div>
+ <div class="modal-body">
+     <%= form_for([@course, @enrollment]) do |f| %>
+       <% if @enrollment.errors.any? %>
+         <div id="error_explanation">
+           <h2><%= pluralize(@enrollment.errors.count, "error") %> prohibited this enrollment from being saved:</h2>
+
+           <ul>
+           <% @enrollment.errors.full_messages.each do |message| %>
+             <li><%= message %></li>
+           <% end %>
+           </ul>
+         </div>
+       <% end %>
+
+       <div class="field form-group">
+         <%= f.label :student_id %>
+         <% student_ids = @course.students.pluck(:id) %>
+         <% if student_ids.length > 0 %>
+           <% missing_students = Person.where('id NOT IN (?)', @course.students.pluck(:id)) %>
+         <% else %>
+           <% missing_students = Person.all %>
+         <% end %>
+         <%= f.select :student, options_for_select(missing_students.all.map{|s|[s.to_s, s.id]}), {}, class: 'form-control' %>
+       </div>
+
+       <div class="modal-footer">
+         <div class="actions form-group">
+           <%= f.submit class: 'btn btn-primary' %>
+         </div>
+       </div>
+    <% end %>
+ </div>

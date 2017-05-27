@@ -4,4 +4,8 @@ class Enrollment < ApplicationRecord
 
   validates :student, presence: true
   validates :course, presence: true
+
+
+  accepts_nested_attributes_for :student
+  accepts_nested_attributes_for :course
 end

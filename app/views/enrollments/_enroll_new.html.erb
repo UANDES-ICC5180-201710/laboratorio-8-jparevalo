@@ -1,0 +1,51 @@
+<div class="modal-header">
+   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+   <h3 id="myModalLabel">Enroll New Student</h3>
+ </div>
+ <div class="modal-body">
+
+   <%= form_for ([@course, @enrollment]) do |fi| %>
+
+  <%= fi.fields_for :student, @enrollment.student do |f| %>
+     <div class="field form-group">
+       <%= f.label :first_name %>
+       <%= f.text_field :first_name, class: 'form-control' %>
+     </div>
+
+     <div class="field form-group">
+       <%= f.label :last_name %>
+       <%= f.text_field :last_name, class: 'form-control' %>
+     </div>
+
+     <div class="field form-group">
+       <%= f.label :email %>
+       <%= f.text_field :email, class: 'form-control' %>
+     </div>
+
+     <div class="field form-group">
+       <%= f.label :email_confirmation %>
+       <%= f.text_field :email_confirmation, class: 'form-control' %>
+     </div>
+
+     <div class="field form-group">
+       <%= f.label :password %>
+       <% if @minimum_password_length %>
+       <em>(<%= @minimum_password_length %> characters minimum)</em>
+       <% end %><br />
+       <%= f.password_field :password, autocomplete: "off", class: 'form-control' %>
+     </div>
+
+     <div class="field form-group">
+       <%= f.label :password_confirmation %><br />
+       <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control' %>
+     </div>
+
+     <div class="modal-footer">
+       <div class="form-group actions">
+         <%= fi.submit "Create New Student and Enroll to "+@course.title, class: "btn btn-primary" %>
+       </div>
+     </div>
+
+   <% end %>
+<% end %>
+ </div>

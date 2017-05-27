@@ -22,6 +22,24 @@ class EnrollmentsController < ApplicationController
   def edit
   end
 
+  def enroll_existing
+  @enrollment = Enrollment.new
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end
+
+  def enroll_new
+    @person = Person.new
+    @enrollment = Enrollment.new
+    @enrollment.student = @person
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end
+
   # POST /enrollments
   # POST /enrollments.json
   def create
@@ -30,9 +48,7 @@ class EnrollmentsController < ApplicationController
 
     respond_to do |format|
       if @enrollment.save
-        format.html {
-          redirect_to action: 'students', controller: 'courses', :id => @course.id, notice: 'Enrollment was successfully created.'
-        }
+        format.html { redirect_to [@course, @enrollment], notice: 'Enrollment was successfully created.' }
         format.json { render :show, status: :created, location: @enrollment }
       else
         format.html { render :new }
@@ -60,7 +76,7 @@ class EnrollmentsController < ApplicationController
   def destroy
     @enrollment.destroy
     respond_to do |format|
-      format.html { redirect_to course_enrollments_url, notice: 'Enrollment was successfully destroyed.' }
+      format.html { redirect_to [@course, @enrollment], notice: 'Enrollment was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
@@ -81,12 +97,18 @@ class EnrollmentsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def enrollment_params
-      student_id = params.require(:enrollment)[:student]
-      if student_id
-        student = Person.find(student_id)
-      else
-        student = nil
+      is_new = false
+      student = params.require(:enrollment)[:student]
+      if student == nil
+        student = params.require(:enrollment)[:student_attributes]
+        is_new = true
       end
-      params.require(:enrollment).permit().merge(:student => student)
+      if !is_new
+        student = Person.find(student)
+      else
+        student = Person.new(student[0])
+        student.save
+      end
+      params.require(:enrollment).permit(student_attributes: [:first_name, :last_name, :email, :email_confirmation, :password, :password_confirmation]).merge(:student => student)
     end
 end
